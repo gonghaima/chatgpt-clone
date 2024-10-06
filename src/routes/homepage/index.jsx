@@ -1,4 +1,4 @@
-import './homepage.scss';
+import './homepage.css';
 
 const homepage = () => {
   return <div>homepage</div>;
