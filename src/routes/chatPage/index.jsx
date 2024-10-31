@@ -1,100 +1,21 @@
-import "./chatPage.css";
-// import NewPrompt from "../../components/newPrompt/NewPrompt";
-// import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
-// import Markdown from "react-markdown";
-// import { IKImage } from "imagekitio-react";
+import './chatPage.css';
+import NewPrompt from '../../components/newPrompt';
+import { useQuery } from "@tanstack/react-query";
+import { useLocation } from 'react-router-dom';
+import Markdown from "react-markdown";
+import { IKImage } from "imagekitio-react";
 
 const ChatPage = () => {
   const path = useLocation().pathname;
-  const chatId = path.split("/").pop();
+  const chatId = path.split('/').pop();
 
-  // const { isPending, error, data } = useQuery({
-  //   queryKey: ["chat", chatId],
-  //   queryFn: () =>
-  //     fetch(`${import.meta.env.VITE_API_URL}/api/chats/${chatId}`, {
-  //       credentials: "include",
-  //     }).then((res) => res.json()),
-  // });
-
-  const isPending = false;
-  const error = false;
-  const data = {
-    history: [
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-      {
-        role: "user",
-        parts: [{ text: "Hello, I am a user" }],
-      },
-      {
-        role: "bot",
-        parts: [{ text: "Hello, I am a bot" }],
-      },
-    ],
-  };
+  const { isPending, error, data } = useQuery({
+    queryKey: ["chat", chatId],
+    queryFn: () =>
+      fetch(`${import.meta.env.VITE_API_URL}/api/chats/${chatId}`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+  });
 
   console.log(data);
 
@@ -103,9 +24,9 @@ const ChatPage = () => {
       <div className="wrapper">
         <div className="chat">
           {isPending
-            ? "Loading..."
+            ? 'Loading...'
             : error
-            ? "Something went wrong!"
+            ? 'Something went wrong!'
             : data?.history?.map((message, i) => (
                 <>
                   {message.img && (
@@ -121,16 +42,16 @@ const ChatPage = () => {
                   )}
                   <div
                     className={
-                      message.role === "user" ? "message user" : "message"
+                      message.role === 'user' ? 'message user' : 'message'
                     }
                     key={i}
                   >
-                    {/* <Markdown>{message.parts[0].text}</Markdown> */}
+                    <Markdown>{message.parts[0].text}</Markdown>
                   </div>
                 </>
               ))}
 
-          {/* {data && <NewPrompt data={data}/>} */}
+          {data && <NewPrompt data={data} />}
         </div>
       </div>
     </div>
