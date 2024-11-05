@@ -26,11 +26,12 @@ const ChatPage = () => {
           {isPending
             ? 'Loading...'
             : error
-            ? 'Something went wrong!'
+            ? 'Something went wrong!' + JSON.stringify(error)
             : data?.history?.map((message, i) => (
-                <>
+                <div key={`data-${i}`}>
                   {message.img && (
                     <IKImage
+                      key={i}
                       urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
                       path={message.img}
                       height="300"
@@ -48,7 +49,7 @@ const ChatPage = () => {
                   >
                     <Markdown>{message.parts[0].text}</Markdown>
                   </div>
-                </>
+                </div>
               ))}
 
           {data && <NewPrompt data={data} />}
