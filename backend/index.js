@@ -103,15 +103,13 @@ app.get('/api/userchats', ClerkExpressRequireAuth(), async (req, res) => {
     res.status(200).send(userChats[0].chats);
   } catch (err) {
     console.log(err);
-    res.status(200).send();
-    // res.status(500).send('Error fetching userchats!');
+    res.status(500).send('Error fetching userchats!');
   }
 });
 
 app.get('/api/chats/:id', ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
 
-  console.log("🚀 ~ app.get ~ userId:", userId)
   try {
     const chat = await Chat.findOne({ _id: req.params.id, userId });
 
@@ -122,18 +120,16 @@ app.get('/api/chats/:id', ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
-  console.log('put request!!!');
-  
+app.put('/api/chats/:id', ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
 
   const { question, answer, img } = req.body;
 
   const newItems = [
     ...(question
-      ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
+      ? [{ role: 'user', parts: [{ text: question }], ...(img && { img }) }]
       : []),
-    { role: "model", parts: [{ text: answer }] },
+    { role: 'model', parts: [{ text: answer }] },
   ];
 
   try {
@@ -150,11 +146,23 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
     res.status(200).send(updatedChat);
   } catch (err) {
     console.log(err);
-    res.status(500).send("Error adding conversation!");
+    res.status(500).send('Error adding conversation!');
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(401).send('Unauthenticated!');
+});
+
+// PRODUCTION
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
 app.listen(port, () => {
   connect();
-  console.log(`Server is running on port ${port}`);
+  console.log('Server running on 3000');
 });
