@@ -1,25 +1,26 @@
-import { useEffect, useRef, useState } from "react";
-import "./newPrompt.css";
-import Upload from "../upload";
-import { IKImage } from "imagekitio-react";
-import model from "../../lib/gemini";
-import Markdown from "react-markdown";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from 'react';
+import './newPrompt.css';
+import Upload from '../upload';
+import { IKImage } from 'imagekitio-react';
+import model from '../../lib/gemini';
+import Markdown from 'react-markdown';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const NewPrompt = ({ data }) => {
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
   const [img, setImg] = useState({
     isLoading: false,
-    error: "",
+    error: '',
     dbData: {},
     aiData: {},
   });
 
-  const history = data?.history?.map(({ role, parts }) => ({
-    role,
-    parts: parts?.length > 0 ? [{ text: parts[0].text }] : [],
-  })) || [];
+  const history =
+    data?.history?.map(({ role, parts }) => ({
+      role,
+      parts: parts?.length > 0 ? [{ text: parts[0].text }] : [],
+    })) || [];
 
   const chat = model.startChat({
     history,
@@ -32,36 +33,39 @@ const NewPrompt = ({ data }) => {
   const formRef = useRef(null);
 
   useEffect(() => {
-    endRef.current.scrollIntoView({ behavior: "smooth" });
+    endRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [data, question, answer, img.dbData]);
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: () => {
-      return fetch(`${import.meta.env.VITE_API_URL}/api/chats/${data._id}`, {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          question: question.length ? question : undefined,
-          answer,
-          img: img.dbData?.filePath || undefined,
-        }),
-      }).then((res) => res.json());
+      return fetch(
+        `https://chatgpt-clone-yr2u.onrender.com/api/chats/${data._id}`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            question: question.length ? question : undefined,
+            answer,
+            img: img.dbData?.filePath || undefined,
+          }),
+        }
+      ).then((res) => res.json());
     },
     onSuccess: () => {
       queryClient
-        .invalidateQueries({ queryKey: ["chat", data._id] })
+        .invalidateQueries({ queryKey: ['chat', data._id] })
         .then(() => {
           formRef.current.reset();
-          setQuestion("");
-          setAnswer("");
+          setQuestion('');
+          setAnswer('');
           setImg({
             isLoading: false,
-            error: "",
+            error: '',
             dbData: {},
             aiData: {},
           });
@@ -79,7 +83,7 @@ const NewPrompt = ({ data }) => {
       const result = await chat.sendMessageStream(
         Object.entries(img.aiData).length ? [img.aiData, text] : [text]
       );
-      let accumulatedText = "";
+      let accumulatedText = '';
       for await (const chunk of result.stream) {
         const chunkText = chunk.text();
         console.log(chunkText);
